@@ -1,0 +1,15 @@
+{
+  "mcpServers": {
+    "LocalFileServer": {
+      "command": "uv",
+      "args": [
+        "--directory",
+        "/home/frank/dev/python/mcp-debian",
+        "run",
+        "python",
+        "server.py"
+      ]
+    }
+  }
+}
+
