@@ -4,11 +4,11 @@
 
 .PHONY: check clean format help run test
 
-MCP      := uv run mcp
+MCP      := uv run --with 'mcp[cli]' python
 PYTHON   := uv run python
-RUFF     := uv run ruff
-TY       := uv run ty
-PYTEST   := uv run pytest
+RUFF     := uv run --with ruff ruff
+TY       := uv run --with ty ty
+PYTEST   := uv run --with pytest --with pytest-cov python -m pytest
 CTAGS    := $(shell command -v ctags 2>/dev/null)
 
 SRCS     := $(shell find . -name "*.py" -not -path "./.venv/*")
@@ -51,10 +51,10 @@ test: ## run unit tests
 	$(PYTEST) -v --cov-report term-missing tests/
 
 run: ## run against test data
-	$(MCP) --help
+	$(MCP) -c "from mcp.server.fastmcp import FastMCP; print('mcp runtime ok')"
 
 version: ## display version information
-	$(MCP) --version
+	$(MCP) -c "import importlib.metadata as m; print(m.version('mcp'))"
 
 clean: ## delete all generated files
-	$(RM) -v tags **/*.pyc **/*.pyo **/*.py,cover *.pyc *.pyo *.py,cover __pycache__ **/__pycache__
+	$(RM) -r tags **/*.pyc **/*.pyo **/*.py,cover *.pyc *.pyo *.py,cover __pycache__ **/__pycache__
