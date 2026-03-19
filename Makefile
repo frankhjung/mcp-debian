@@ -4,11 +4,11 @@
 
 .PHONY: check clean format help run test
 
-MCP      := uv run --with 'mcp[cli]' python
+MCP      := uv run python
 PYTHON   := uv run python
-RUFF     := uv run --with ruff ruff
-TY       := uv run --with ty ty
-PYTEST   := uv run --with pytest --with pytest-cov python -m pytest
+RUFF     := uv run ruff
+TY       := uv run ty
+PYTEST   := uv run python -m pytest
 CTAGS    := $(shell command -v ctags 2>/dev/null)
 
 SRCS     := $(shell find . -name "*.py" -not -path "./.venv/*")
@@ -33,7 +33,7 @@ help: ## display this help
 
 format: ## format code and sort imports
 	# format and sort code using ruff
-	$(RUFF) check --select I --fix $(SRCS)
+	$(RUFF) check --fix $(SRCS)
 	$(RUFF) format $(SRCS)
 
 check: ## check style and lint code
@@ -57,4 +57,4 @@ version: ## display version information
 	$(MCP) -c "import importlib.metadata as m; print(m.version('mcp'))"
 
 clean: ## delete all generated files
-	$(RM) -r tags **/*.pyc **/*.pyo **/*.py,cover *.pyc *.pyo *.py,cover __pycache__ **/__pycache__
+	$(RM) -r tags .ruff_cache .pytest_cache **/*.pyc **/*.pyo **/__pycache__

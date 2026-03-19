@@ -6,5 +6,11 @@ readme = "README.md"
 requires-python = ">=3.13"
 dependencies = ["mcp[cli]>=1.26.0"]
 
+[project.scripts]
+mcp-debian = "server:mcp.run"
+
 [dependency-groups]
 dev = ["pytest>=9.0.2", "pytest-cov>=7.0.0", "ruff>=0.15.6", "ty>=0.0.23"]
+
+[tool.ruff.lint]
+extend-select = ["I"]

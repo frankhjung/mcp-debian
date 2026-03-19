@@ -1,9 +1,9 @@
-import os
+import pathlib
 
 from mcp.server.fastmcp import FastMCP
 
 # Create an MCP server with the FastMCP wrapper
-mcp = FastMCP("LocalFileServer")
+mcp = FastMCP("mcp-debian", "A simple MCP server for Debian-based systems.")
 
 
 @mcp.tool()
@@ -12,9 +12,12 @@ def list_directory(path: str) -> list[str]:
 
     Args:
         path: The absolute path of the directory to list.
+
+    Returns:
+        A list of file and directory names in the specified path.
     """
     try:
-        return os.listdir(path)
+        return [p.name for p in pathlib.Path(path).iterdir()]
     except OSError as e:
         return [f"Error listing directory: {e}"]
 
@@ -25,10 +28,12 @@ def read_file(path: str) -> str:
 
     Args:
         path: The absolute path of the file to read.
+
+    Returns:
+        The content of the file as a string.
     """
     try:
-        with open(path, "r", encoding="utf-8") as f:
-            return f.read()
+        return pathlib.Path(path).read_text(encoding="utf-8")
     except (OSError, UnicodeDecodeError) as e:
         return f"Error reading file: {e}"
 

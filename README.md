@@ -1,6 +1,6 @@
-# MCP Debain Server
+# MCP Debian Server
 
-This is a demonstration MCP project.
+This is a demonstration MCP project for interacting with a Debian-based system.
 
 ## Model Context Protocol (MCP)
 
@@ -91,10 +91,17 @@ uv sync
 Run with:
 
 ```bash
-uv run mcp
+uv run mcp-debian
 ```
 
-Then open [http://localhost:8000](http://localhost:8000) in your browser.
+## Development
+
+The project includes a `Makefile` for common development tasks:
+
+* `make format`: Format code and sort imports using `ruff`.
+* `make check`: Run linting and type checking (`ruff`, `ty`).
+* `make test`: Run unit tests with `pytest`.
+* `make clean`: Clean up temporary files.
 
 ## Add MCP Server to VSCode
 
@@ -111,7 +118,7 @@ Steps to Configure a Local MCP Server in VS Code Ensure Prerequisites:
 
 * **Run the command MCP:** Add Server. Select `Command (stdio)` as the transport
   mechanism for a local server. Enter the absolute command to run your server:
-  `uv run [server-name]`. Give your server a descriptive name. Choose where to
+  `uv --directory /path/to/mcp-debian run mcp-debian`. Give your server a descriptive name (e.g., `mcp-debian`). Choose where to
   save the configuration (User or Workspace settings). Workspace is recommended
   for project-specific configurations and security best practices. This creates
   a `.vscode/mcp.json` file.
