@@ -91,7 +91,21 @@ uv sync
 Run with:
 
 ```bash
-uv run mcp-debian
+uv run python server.py
+```
+
+## MCP tools
+
+This server currently exposes the following tools:
+
+* `list_directory(path: str) -> list[str]`: Lists names in a directory path.
+* `read_file(path: str) -> str`: Reads a UTF-8 text file.
+* `get_version() -> str`: Reads `/etc/os-release` and returns `PRETTY_NAME` and `DEBIAN_VERSION_FULL`.
+
+To list tools from the running project:
+
+```bash
+make list-tools
 ```
 
 ## Development
@@ -102,6 +116,13 @@ The project includes a `Makefile` for common development tasks:
 * `make check`: Run linting and type checking (`ruff`, `ty`).
 * `make test`: Run unit tests with `pytest`.
 * `make clean`: Clean up temporary files.
+
+Other useful targets:
+
+* `make sync`: Install or update dependencies from `uv.lock`.
+* `make lock`: Regenerate `uv.lock` from `pyproject.toml`.
+* `make list-tools`: List registered MCP tools from the server.
+* `make run`: Run a lightweight MCP runtime smoke test.
 
 ## Add MCP Server to VSCode
 
@@ -118,7 +139,7 @@ Steps to Configure a Local MCP Server in VS Code Ensure Prerequisites:
 
 * **Run the command MCP:** Add Server. Select `Command (stdio)` as the transport
   mechanism for a local server. Enter the absolute command to run your server:
-  `uv --directory /path/to/mcp-debian run mcp-debian`. Give your server a
+  `uv --directory /path/to/mcp-debian run python server.py`. Give your server a
   descriptive name (e.g., `mcp-debian`). Choose where to save the configuration
   (User or Workspace settings). Workspace is recommended for project-specific
   configurations and security best practices. This creates a `.vscode/mcp.json`
@@ -126,8 +147,8 @@ Steps to Configure a Local MCP Server in VS Code Ensure Prerequisites:
 
 * **Start and Verify the Server:** Once the configuration is saved, a "Start" or
   "Restart" button should appear inline in the `.vscode/mcp.json` file, or you
-  can use the command palette to run `uv runMCP: List Servers`, select your
-  server, and choose Start.
+  can use the command palette to run `MCP: List Servers`, select your server,
+  and choose Start.
 
 * **List Server:** You can list all configured servers using the command palette
   with `MCP: List Servers`. This will show you the status of each server
@@ -153,6 +174,7 @@ This project is using the following tools from
 
 ## Resources
 
+* [Introduction to MCP (YouTube)](https://youtu.be/7j1t3UZA1TY?si=5Biw4AWTN7Nfywvu)
 * [Introduction to MCP](https://modelcontextprotocol.io/introduction)
 * [MCP Protocol](https://docs.cursor.com/context/model-context-protocol)
 * [Discord](https://discord.com/channels/1348850613705904179/1348850614896951298)

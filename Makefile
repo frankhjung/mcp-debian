@@ -2,7 +2,7 @@
 
 .DEFAULT_GOAL := default
 
-.PHONY: build-image check clean doctor format help images list-tools py-version run run-container test test-container version
+.PHONY: build-image check clean doctor format help images list-tools lock py-version run run-container sync test test-container version
 
 MCP      := uv run python
 PYTHON   := uv run python
@@ -15,7 +15,7 @@ CTAGS    := $(shell command -v ctags 2>/dev/null)
 
 SRCS     := $(shell find . -name "*.py" -not -path "./.venv/*")
 
-default:	format check test version ## default goal
+default:	format check test ## default goal (format, check, and test code)
 
 all:	format check test run ## check cover run test doc dist
 
@@ -38,6 +38,12 @@ help: ## display this help
 	@echo "  make build-image"
 	@echo "  docker run --rm -i -v \"$$(pwd):/workspace:ro\" mcp-debian"
 
+sync: ## install/update dependencies from lockfile
+	uv sync
+
+lock: ## regenerate lockfile from pyproject
+	uv lock
+
 format: ## format code and sort imports
 	# format and sort code using ruff
 	$(RUFF) check --fix $(SRCS)
@@ -57,13 +63,13 @@ endif
 test: ## run unit tests
 	$(PYTEST) -v --cov-report term-missing tests/
 
-run: ## run against test data
+run: ## run MCP runtime smoke test
 	$(MCP) -c "from mcp.server.fastmcp import FastMCP; print('mcp runtime ok')"
 
 list-tools: ## show MCP tool names
-	$(MCP) -c "from server import list_directory, read_file; print(list_directory.__name__); print(read_file.__name__)"
+	$(MCP) -c "from server import mcp; print(*[t.name for t in mcp._tool_manager.list_tools()], sep='\n')"
 
-py-version: ## display MCP package version information
+mcp-version: ## display MCP package version information
 	$(MCP) -c "import importlib.metadata as m; print(m.version('mcp'))"
 
 build-image: ## build the Docker image

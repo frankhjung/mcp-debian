@@ -3,7 +3,7 @@ import pathlib
 from mcp.server.fastmcp import FastMCP
 
 # Create an MCP server with the FastMCP wrapper
-mcp = FastMCP("mcp-debian", "Perform file tasks on Debian-based systems.")
+mcp = FastMCP("mcp-debian", "Perform tasks on Debian-based systems.")
 
 
 @mcp.tool()
@@ -36,6 +36,30 @@ def read_file(path: str) -> str:
         return pathlib.Path(path).read_text(encoding="utf-8")
     except (OSError, UnicodeDecodeError) as e:
         return f"Error reading file: {e}"
+
+
+@mcp.tool()
+def get_version() -> str:
+    """Get the Debian version information from /etc/os-release.
+
+    Returns:
+        A string containing PRETTY_NAME and DEBIAN_VERSION_FULL.
+    """
+    try:
+        pairs: dict[str, str] = {}
+        for line in (
+            pathlib.Path("/etc/os-release").read_text(encoding="utf-8").splitlines()
+        ):
+            if not line or line.startswith("#") or "=" not in line:
+                continue
+            key, value = line.split("=", maxsplit=1)
+            pairs[key] = value.strip().strip('"')
+
+        pretty_name = pairs.get("PRETTY_NAME", "Unknown")
+        debian_version_full = pairs.get("DEBIAN_VERSION_FULL", "Unknown")
+        return f"{pretty_name} {debian_version_full}"
+    except (OSError, UnicodeDecodeError) as e:
+        return f"Error reading /etc/os-release: {e}"
 
 
 if __name__ == "__main__":
