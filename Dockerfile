@@ -15,4 +15,4 @@ COPY server.py ./
 RUN useradd --create-home --shell /bin/bash appuser
 USER appuser
 
-ENTRYPOINT ["uv", "run", "python", "server.py"]
+ENTRYPOINT ["/app/.venv/bin/python", "server.py"]

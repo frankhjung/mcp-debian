@@ -1,11 +1,12 @@
 import os
 import sys
+from pathlib import Path
 
 sys.path.insert(0, os.path.abspath(os.path.dirname(os.path.dirname(__file__))))
 from server import list_directory, read_file
 
 
-def test_list_directory_success(tmp_path):
+def test_list_directory_success(tmp_path: Path):
     (tmp_path / "file1.txt").touch()
     (tmp_path / "file2.txt").touch()
     (tmp_path / "subdir").mkdir()
@@ -25,7 +26,7 @@ def test_list_directory_failure():
     assert items[0].startswith("Error listing directory:")
 
 
-def test_read_file_success(tmp_path):
+def test_read_file_success(tmp_path: Path):
     test_file = tmp_path / "test.txt"
     test_file.write_text("Hello, World!", encoding="utf-8")
 

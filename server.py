@@ -3,7 +3,7 @@ import pathlib
 from mcp.server.fastmcp import FastMCP
 
 # Create an MCP server with the FastMCP wrapper
-mcp = FastMCP("mcp-debian", "A simple MCP server for Debian-based systems.")
+mcp = FastMCP("mcp-debian", "Perform file tasks on Debian-based systems.")
 
 
 @mcp.tool()

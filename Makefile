@@ -2,13 +2,15 @@
 
 .DEFAULT_GOAL := default
 
-.PHONY: check clean format help run test
+.PHONY: build-image check clean doctor format help images list-tools py-version run run-container test test-container version
 
 MCP      := uv run python
 PYTHON   := uv run python
 RUFF     := uv run ruff
 TY       := uv run ty
 PYTEST   := uv run python -m pytest
+DOCKER   ?= docker
+PROJECT_NAME ?= mcp-debian
 CTAGS    := $(shell command -v ctags 2>/dev/null)
 
 SRCS     := $(shell find . -name "*.py" -not -path "./.venv/*")
@@ -29,7 +31,12 @@ help: ## display this help
 	@echo
 	@echo "uv run <command>"
 	@echo
-	$(MCP) --help
+	@echo "MCP server command (stdio):"
+	@echo "  uv run python server.py"
+	@echo
+	@echo "MCP server command (Docker, stdio):"
+	@echo "  make build-image"
+	@echo "  docker run --rm -i -v \"$$(pwd):/workspace:ro\" mcp-debian"
 
 format: ## format code and sort imports
 	# format and sort code using ruff
@@ -53,8 +60,46 @@ test: ## run unit tests
 run: ## run against test data
 	$(MCP) -c "from mcp.server.fastmcp import FastMCP; print('mcp runtime ok')"
 
-version: ## display version information
+list-tools: ## show MCP tool names
+	$(MCP) -c "from server import list_directory, read_file; print(list_directory.__name__); print(read_file.__name__)"
+
+py-version: ## display MCP package version information
 	$(MCP) -c "import importlib.metadata as m; print(m.version('mcp'))"
+
+build-image: ## build the Docker image
+	@$(DOCKER) build -t $(PROJECT_NAME) .
+
+run-container: build-image ## test server tools: list tests/ and read README.md
+	@$(DOCKER) run --rm \
+		-v "$(CURDIR):/workspace:ro" \
+		--entrypoint /app/.venv/bin/python \
+		$(PROJECT_NAME) -c 'from server import list_directory, read_file; print("== list_directory: /workspace/tests =="); print(*list_directory("/workspace/tests"), sep="\n"); print("\n== read_file: /workspace/README.md (first 200 chars) =="); print(read_file("/workspace/README.md")[:200])'
+
+test-container: build-image ## test the Docker image: verify server module loads and tools are registered
+	@$(DOCKER) run --rm \
+		--entrypoint /app/.venv/bin/python \
+		$(PROJECT_NAME) -c 'from server import mcp, list_directory, read_file; tools = [t.name for t in mcp._tool_manager.list_tools()]; print("Tools registered:"); print(*tools, sep="\n")'
+
+images: ## list local images for this project
+	@$(DOCKER) image ls $(PROJECT_NAME)
+
+doctor: ## show Docker context, builder, and project images
+	@echo "== Docker context =="
+	@$(DOCKER) context show
+	@echo
+	@echo "== Docker contexts =="
+	@$(DOCKER) context ls
+	@echo
+	@echo "== Buildx builders =="
+	@$(DOCKER) buildx ls
+	@echo
+	@echo "== Project images =="
+	@$(DOCKER) image ls $(PROJECT_NAME)
+
+version: build-image ## show mcp package version in container
+	@$(DOCKER) run --rm \
+		--entrypoint /app/.venv/bin/python \
+		$(PROJECT_NAME) -c 'import importlib.metadata as m; print("mcp", m.version("mcp"))'
 
 clean: ## delete all generated files
 	$(RM) -r tags .ruff_cache .pytest_cache **/*.pyc **/*.pyo **/__pycache__

@@ -118,10 +118,11 @@ Steps to Configure a Local MCP Server in VS Code Ensure Prerequisites:
 
 * **Run the command MCP:** Add Server. Select `Command (stdio)` as the transport
   mechanism for a local server. Enter the absolute command to run your server:
-  `uv --directory /path/to/mcp-debian run mcp-debian`. Give your server a descriptive name (e.g., `mcp-debian`). Choose where to
-  save the configuration (User or Workspace settings). Workspace is recommended
-  for project-specific configurations and security best practices. This creates
-  a `.vscode/mcp.json` file.
+  `uv --directory /path/to/mcp-debian run mcp-debian`. Give your server a
+  descriptive name (e.g., `mcp-debian`). Choose where to save the configuration
+  (User or Workspace settings). Workspace is recommended for project-specific
+  configurations and security best practices. This creates a `.vscode/mcp.json`
+  file.
 
 * **Start and Verify the Server:** Once the configuration is saved, a "Start" or
   "Restart" button should appear inline in the `.vscode/mcp.json` file, or you
@@ -143,16 +144,19 @@ Steps to Configure a Local MCP Server in VS Code Ensure Prerequisites:
 
 ### uv
 
-[uv](https://docs.astral.sh/uv/) is used to build and run the server.
+This project is using the following tools from
+[astral](https://docs.astral.sh/):
 
-This project is using [ruff](https://docs.astral.sh/ruff) and
-[ty](https://docs.astral.sh/ty) tools from [astral](https://docs.astral.sh/)
+* [ruff](https://docs.astral.sh/ruff) for linting and formatting code
+* [ty](https://docs.astral.sh/ty) for type checking
+* [uv](https://docs.astral.sh/uv/) for building and running the project
 
 ## Resources
 
 * [Introduction to MCP](https://modelcontextprotocol.io/introduction)
 * [MCP Protocol](https://docs.cursor.com/context/model-context-protocol)
 * [Discord](https://discord.com/channels/1348850613705904179/1348850614896951298)
+* [Udemy: MCP Crash Course: Complete Model Context Protocol in a Day](https://www.udemy.com/course/model-context-protocol/)
 
 ## License
 
