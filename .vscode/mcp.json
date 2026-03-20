@@ -1,15 +1,12 @@
 {
 	"servers": {
-		"my-mcp-debian": {
+		"mcp-debian": {
 			"type": "stdio",
-			"command": "docker",
+			"command": "uv",
 			"args": [
 				"run",
-				"--rm",
-				"-i",
-				"-v",
-				"/home/frank/dev/python/mcp-debian:/workspace:ro",
-				"mcp-debian"
+				"python",
+				"server.py"
 			]
 		}
 	},

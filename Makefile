@@ -70,7 +70,7 @@ list-tools: ## show MCP tool names
 	$(MCP) -c "from server import mcp; print(*[t.name for t in mcp._tool_manager.list_tools()], sep='\n')"
 
 mcp-version: ## display MCP package version information
-	$(MCP) -c "import importlib.metadata as m; print(m.version('mcp'))"
+	$(MCP) -c "import importlib.metadata as m; print("mcp", m.version('mcp'))"
 
 build-image: ## build the Docker image
 	@$(DOCKER) build -t $(PROJECT_NAME) .
@@ -101,11 +101,6 @@ doctor: ## show Docker context, builder, and project images
 	@echo
 	@echo "== Project images =="
 	@$(DOCKER) image ls $(PROJECT_NAME)
-
-version: build-image ## show mcp package version in container
-	@$(DOCKER) run --rm \
-		--entrypoint /app/.venv/bin/python \
-		$(PROJECT_NAME) -c 'import importlib.metadata as m; print("mcp", m.version("mcp"))'
 
 clean: ## delete all generated files
 	$(RM) -r tags .ruff_cache .pytest_cache **/*.pyc **/*.pyo **/__pycache__

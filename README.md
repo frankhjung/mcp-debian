@@ -26,7 +26,7 @@ rebuild their "connectors."
 * **AI Developers** (Anthropic, OpenAI, etc.) only have to build one MCP client.
 * **Users** can plug any tool into any AI instantly.
 
-## 2. What does MCP offer that Swagger (OpenAPI) doesn’t?
+## 2. What does MCP offer that Swagger (OpenAPI) doesn't?
 
 While **Swagger/OpenAPI** is a way to *document* an API so a human developer
 knows how to write code for it, **MCP** is a way for an AI to *negotiate its own
@@ -62,9 +62,9 @@ doesn't just wait for a request; it can also send "notifications" or "resource
 updates" to the AI, keeping the model's "memory" or context updated in
 real-time.
 
-## 4. Why can’t LLMs use APIs directly?
+## 4. Why can't LLMs use APIs directly?
 
-Technically, they can (via "Function Calling"), but it’s brittle and inefficient
+Technically, they can (via "Function Calling"), but it's brittle and inefficient
 for three main reasons:
 
 1. **The "N × M" Problem:** If you have 5 AI apps and 10 data sources, you have
@@ -100,7 +100,7 @@ This server currently exposes the following tools:
 
 * `list_directory(path: str) -> list[str]`: Lists names in a directory path.
 * `read_file(path: str) -> str`: Reads a UTF-8 text file.
-* `get_version() -> str`: Reads `/etc/os-release` and returns `PRETTY_NAME` and `DEBIAN_VERSION_FULL`.
+* `get_version() -> str`: Reads `/etc/os-release` and returns its raw contents.
 
 To list tools from the running project:
 

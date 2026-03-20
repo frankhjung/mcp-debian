@@ -4,6 +4,8 @@ from pathlib import Path
 
 import pytest
 
+import server
+
 sys.path.insert(0, os.path.abspath(os.path.dirname(os.path.dirname(__file__))))
 from server import get_version, list_directory, read_file
 
@@ -44,14 +46,16 @@ def test_read_file_failure():
 
 
 def test_get_version_success(monkeypatch: pytest.MonkeyPatch):
-    os_release = (
-        'PRETTY_NAME="Debian GNU/Linux 13 (trixie)"\n'
-        "DEBIAN_VERSION_FULL=13.4\n"
-        "ID=debian\n"
-    )
+    os_release = 'PRETTY_NAME="Debian GNU/Linux forky/sid"\n'
+    called_path: list[str] = []
 
-    monkeypatch.setattr(Path, "read_text", lambda *args, **kwargs: os_release)  # type: ignore
+    def fake_read_file(path: str) -> str:
+        called_path.append(path)
+        return os_release
+
+    monkeypatch.setattr(server, "read_file", fake_read_file)
 
     version = get_version()
 
-    assert version == "Debian GNU/Linux 13 (trixie) 13.4"
+    assert version == os_release
+    assert called_path == ["/etc/os-release"]
