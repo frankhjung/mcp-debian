@@ -11,7 +11,7 @@ give AI models access to your local files, databases, or third-party services.
 Here is a breakdown of how it differs from traditional web standards and why it
 exists.
 
-## 1. What problem is MCP trying to solve?
+### What problem is MCP trying to solve?
 
 MCP solves the **Isolation Problem**.
 
@@ -26,14 +26,14 @@ rebuild their "connectors."
 * **AI Developers** (Anthropic, OpenAI, etc.) only have to build one MCP client.
 * **Users** can plug any tool into any AI instantly.
 
-## 2. What does MCP offer that Swagger (OpenAPI) doesn't?
+### What does MCP offer that Swagger (OpenAPI) doesn't?
 
 While **Swagger/OpenAPI** is a way to *document* an API so a human developer
 knows how to write code for it, **MCP** is a way for an AI to *negotiate its own
 capabilities* at runtime.
 
-| Feature       | Swagger / OpenAPI            | Model Context Protocol (MCP)            |
-| :---          | :---                         | :---                                    |
+| Feature           | Swagger / OpenAPI            | Model Context Protocol (MCP)            |
+| :---              | :---                         | :---                                    |
 | **Primary User**  | Human Developers             | AI Models / Agents                      |
 | **Discovery**     | Static (read the docs)       | Dynamic (AI asks: "What can you do?")   |
 | **Context**       | Stateless (request/response) | Stateful (maintains session & context)  |
@@ -45,7 +45,7 @@ new code to use it. In MCP, if you add a new tool to the server, the LLM
 immediately "sees" it and can start using it without any code changes to the
 host application.
 
-## 3. Why is MCP different from a standard API?
+### Why is MCP different from a standard API?
 
 A standard API (like REST) is a **fixed contract** between two programs. MCP is
 a **communication layer** that sits *on top* of APIs to make them "AI-legible."
@@ -62,7 +62,7 @@ doesn't just wait for a request; it can also send "notifications" or "resource
 updates" to the AI, keeping the model's "memory" or context updated in
 real-time.
 
-## 4. Why can't LLMs use APIs directly?
+### Why can't LLMs use APIs directly?
 
 Technically, they can (via "Function Calling"), but it's brittle and inefficient
 for three main reasons:
@@ -82,19 +82,7 @@ for three main reasons:
 
 ## Quick start
 
-Sync the project with:
-
-```bash
-uv sync
-```
-
-Run with:
-
-```bash
-uv run python server.py
-```
-
-## MCP tools
+### MCP tools provided by this server
 
 This server currently exposes the following tools:
 
@@ -108,7 +96,23 @@ To list tools from the running project:
 make list-tools
 ```
 
+### Use uv to sync and run the server
+
+Sync the project with:
+
+```bash
+uv sync
+```
+
+Run with:
+
+```bash
+uv run python server.py
+```
+
 ## Development
+
+### Using the Makefile
 
 The project includes a `Makefile` for common development tasks:
 
@@ -121,10 +125,13 @@ Other useful targets:
 
 * `make sync`: Install or update dependencies from `uv.lock`.
 * `make lock`: Regenerate `uv.lock` from `pyproject.toml`.
+* `make update`: List outdated packages, upgrade dependency versions in the
+  lockfile, and sync the environment.
 * `make list-tools`: List registered MCP tools from the server.
+* `make mcp-version`: Print the installed `mcp` package version.
 * `make run`: Run a lightweight MCP runtime smoke test.
 
-## Add MCP Server to VSCode
+### Add MCP Server to VSCode
 
 Steps to Configure a Local MCP Server in VS Code Ensure Prerequisites:
 
@@ -160,6 +167,43 @@ Steps to Configure a Local MCP Server in VS Code Ensure Prerequisites:
   name, or the AI agent will automatically detect and suggest using the
   available tools from your local MCP server. You will be prompted for
   confirmation before the tool is run.
+
+  * **prompt:**
+
+    ```text
+    #mcp-debian list the directories in the current workspace
+    ```
+
+  * **response:**
+
+    ```text
+    I will call the Debian MCP tools directly to fetch OS version info and list the top-level directories in your current workspace.
+
+    Ran get_version mcp-debian (MCP Server)
+    Ran list_directory mcp-debian (MCP Server)
+    I got the raw workspace entries from the MCP tool; I’ll quickly filter to directories only so the result matches your request exactly.
+
+    Ran find . -maxdepth 1 -type d | sed 's#^\./##' | sort
+    Debian version from mcp_mcp-debian_get_version:
+
+    PRETTY_NAME="Debian GNU/Linux forky/sid"
+    NAME="Debian GNU/Linux"
+    VERSION_CODENAME=forky
+    ID=debian
+
+    Top-level directories in the current workspace:
+
+    .
+    .git
+    .github
+    .mypy_cache
+    pycache
+    .pytest_cache
+    .ruff_cache
+    tests
+    .venv
+    .vscode
+    ```
 
 ## Dependencies
 

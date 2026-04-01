@@ -2,7 +2,7 @@
 
 .DEFAULT_GOAL := default
 
-.PHONY: build-image check clean doctor format help images list-tools lock py-version run run-container sync test test-container version
+.PHONY: build-image check clean doctor format help images list-tools lock py-version run run-container sync test test-container update version
 
 MCP      := uv run python
 PYTHON   := uv run python
@@ -44,6 +44,11 @@ sync: ## install/update dependencies from lockfile
 lock: ## regenerate lockfile from pyproject
 	uv lock
 
+update: ## list outdated packages and update lockfile/environment
+	uv pip list --outdated
+	uv lock --upgrade
+	uv sync
+
 format: ## format code and sort imports
 	# format and sort code using ruff
 	$(RUFF) check --fix $(SRCS)
@@ -70,7 +75,7 @@ list-tools: ## show MCP tool names
 	$(MCP) -c "from server import mcp; print(*[t.name for t in mcp._tool_manager.list_tools()], sep='\n')"
 
 mcp-version: ## display MCP package version information
-	$(MCP) -c "import importlib.metadata as m; print("mcp", m.version('mcp'))"
+	$(MCP) -c "import importlib.metadata as m; print('mcp', m.version('mcp'))"
 
 build-image: ## build the Docker image
 	@$(DOCKER) build -t $(PROJECT_NAME) .
@@ -103,4 +108,4 @@ doctor: ## show Docker context, builder, and project images
 	@$(DOCKER) image ls $(PROJECT_NAME)
 
 clean: ## delete all generated files
-	$(RM) -r tags .ruff_cache .pytest_cache **/*.pyc **/*.pyo **/__pycache__
+	$(RM) -r tags .ruff_cache .pytest_cache __pycache__ **/*.pyc **/*.pyo **/__pycache__
