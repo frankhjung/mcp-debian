@@ -88,7 +88,11 @@ This server currently exposes the following tools:
 
 * `list_directory(path: str) -> list[str]`: Lists names in a directory path.
 * `read_file(path: str) -> str`: Reads a UTF-8 text file.
-* `get_version() -> str`: Reads `/etc/os-release` and returns its raw contents.
+* `get_os_version() -> str`: Reads `/etc/os-release` and returns its raw
+  contents.
+* `get_server_version() -> str`: Returns the version declared for this MCP
+  server in `pyproject.toml`. The same version is also included in the
+  server's MCP instructions at startup.
 
 To list tools from the running project:
 
@@ -110,6 +114,32 @@ Run with:
 uv run python server.py
 ```
 
+### Check the MCP server version
+
+The MCP server reads its project version from `pyproject.toml` at startup and
+makes it available through the `get_server_version()` MCP tool.
+
+To check it locally from Python:
+
+```bash
+uv run python -c "import server; print(server.get_server_version())"
+```
+
+Or via the `Makefile`:
+
+```bash
+make mcp-version      # installed mcp package version
+make project-version  # project version only
+make host-version     # host OS version
+make version          # MCP + project + host version info
+```
+
+From an MCP client, call:
+
+```text
+get_server_version()
+```
+
 ## Development
 
 ### Using the Makefile
@@ -129,7 +159,39 @@ Other useful targets:
   lockfile, and sync the environment.
 * `make list-tools`: List registered MCP tools from the server.
 * `make mcp-version`: Print the installed `mcp` package version.
+* `make project-version`: Print this project's version from `pyproject.toml`.
+* `make host-version`: Print the host OS version.
 * `make run`: Run a lightweight MCP runtime smoke test.
+
+### Update the project version
+
+To bump the project version, update the `version` field under `[project]` in
+`pyproject.toml`:
+
+```toml
+[project]
+version = "0.3.0"
+```
+
+Then refresh the lockfile and verify the change:
+
+```bash
+uv lock
+rg -n '^version = ' pyproject.toml
+```
+
+> Note: `uv.lock` may still contain other `0.2.0` entries for third-party
+> dependencies. That does not mean the `mcp-debian` project version failed to
+> update.
+
+Run the makefile targets to print version information:
+
+```bash
+make project-version  # project version (from pyproject.toml)
+make mcp-version      # installed mcp package version
+make host-version     # host OS version
+make version          # all version info together
+```
 
 ### Add MCP Server to VSCode
 
@@ -179,12 +241,12 @@ Steps to Configure a Local MCP Server in VS Code Ensure Prerequisites:
     ```text
     I will call the Debian MCP tools directly to fetch OS version info and list the top-level directories in your current workspace.
 
-    Ran get_version mcp-debian (MCP Server)
+    Ran get_os_version mcp-debian (MCP Server)
     Ran list_directory mcp-debian (MCP Server)
     I got the raw workspace entries from the MCP tool; I’ll quickly filter to directories only so the result matches your request exactly.
 
     Ran find . -maxdepth 1 -type d | sed 's#^\./##' | sort
-    Debian version from mcp_mcp-debian_get_version:
+    Debian version from mcp_mcp-debian_get_os_version:
 
     PRETTY_NAME="Debian GNU/Linux forky/sid"
     NAME="Debian GNU/Linux"
@@ -223,6 +285,7 @@ This project is using the following tools from
 * [MCP Protocol](https://docs.cursor.com/context/model-context-protocol)
 * [Discord](https://discord.com/channels/1348850613705904179/1348850614896951298)
 * [Udemy: MCP Crash Course: Complete Model Context Protocol in a Day](https://www.udemy.com/course/model-context-protocol/)
+* [Top 10 LLM security risks](https://genai.owasp.org/llm-top-10/)
 
 ## License
 

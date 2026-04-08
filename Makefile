@@ -75,7 +75,15 @@ list-tools: ## show MCP tool names
 	$(MCP) -c "from server import mcp; print(*[t.name for t in mcp._tool_manager.list_tools()], sep='\n')"
 
 mcp-version: ## display MCP package version information
-	$(MCP) -c "import importlib.metadata as m; print('mcp', m.version('mcp'))"
+	@$(MCP) -c "import importlib.metadata as m; print('mcp', m.version('mcp'))"
+
+project-version: ## display this project's version
+	@$(MCP) -c "import server; print('server', server.get_project_version())"
+
+host-version: ## display host version
+	@$(MCP) -c "import server; print(server.get_os_version())"
+
+version: mcp-version project-version host-version ## display MCP, project, and host version information
 
 build-image: ## build the Docker image
 	@$(DOCKER) build -t $(PROJECT_NAME) .

@@ -4,10 +4,16 @@ from pathlib import Path
 
 import pytest
 
-import server
-
 sys.path.insert(0, os.path.abspath(os.path.dirname(os.path.dirname(__file__))))
-from server import get_version, list_directory, read_file
+
+import server
+from server import (
+    get_os_version,
+    get_project_version,
+    get_server_version,
+    list_directory,
+    read_file,
+)
 
 
 def test_list_directory_success(tmp_path: Path):
@@ -45,7 +51,7 @@ def test_read_file_failure():
     assert content.startswith("Error reading file:")
 
 
-def test_get_version_success(monkeypatch: pytest.MonkeyPatch):
+def test_get_os_version_success(monkeypatch: pytest.MonkeyPatch):
     os_release = 'PRETTY_NAME="Debian GNU/Linux forky/sid"\n'
     called_path: list[str] = []
 
@@ -55,7 +61,12 @@ def test_get_version_success(monkeypatch: pytest.MonkeyPatch):
 
     monkeypatch.setattr(server, "read_file", fake_read_file)
 
-    version = get_version()
+    version = get_os_version()
 
     assert version == os_release
     assert called_path == ["/etc/os-release"]
+
+
+def test_get_server_version():
+    assert get_server_version() == f"server {get_project_version()}"
+    assert get_server_version() == f"server {get_project_version()}"
