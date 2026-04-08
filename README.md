@@ -91,8 +91,8 @@ This server currently exposes the following tools:
 * `get_os_version() -> str`: Reads `/etc/os-release` and returns its raw
   contents.
 * `get_server_version() -> str`: Returns the version declared for this MCP
-  server in `pyproject.toml`. The same version is also included in the
-  server's MCP instructions at startup.
+  server in `pyproject.toml`. The same version is also included in the server's
+  MCP instructions at startup.
 
 To list tools from the running project:
 
@@ -232,40 +232,54 @@ Steps to Configure a Local MCP Server in VS Code Ensure Prerequisites:
 
   * **prompt:**
 
-    ```text
-    #mcp-debian list the directories in the current workspace
-    ```
+    `#mcp-debian list the directories in the current workspace`
 
   * **response:**
 
-    ```text
-    I will call the Debian MCP tools directly to fetch OS version info and list the top-level directories in your current workspace.
+    Consifered using MCP tool for directory listing
 
-    Ran get_os_version mcp-debian (MCP Server)
-    Ran list_directory mcp-debian (MCP Server)
-    I got the raw workspace entries from the MCP tool; I’ll quickly filter to directories only so the result matches your request exactly.
+    * I need to answer the user's request, and I’m considering using the MCP
+      tool to list the directory. The tool reference shows that
+      mcp_mcp-debian_list_directory is available, so I should call it with the
+      current workspace path. It seems important to mention that I’m using the
+      tool since it likely works well for this task. I'll preface the tool call
+      with a brief status update before executing it. Let's go ahead and make
+      that call!
 
-    Ran find . -maxdepth 1 -type d | sed 's#^\./##' | sort
-    Debian version from mcp_mcp-debian_get_os_version:
+    Checking the current workspace directory listing via MCP now.
 
-    PRETTY_NAME="Debian GNU/Linux forky/sid"
-    NAME="Debian GNU/Linux"
-    VERSION_CODENAME=forky
-    ID=debian
+    Ran `list_directory` - mcp-debian (MCP Server)
 
-    Top-level directories in the current workspace:
-
-    .
-    .git
-    .github
-    .mypy_cache
-    pycache
-    .pytest_cache
-    .ruff_cache
-    tests
-    .venv
-    .vscode
+    ```json
+    Completed with input: {
+      "path": "/home/frank/dev/mcp/debian"
+    }
     ```
+
+    Here are the directories/files in the current workspace:
+
+    * `.python-version`
+    * `.gitignore`
+    * `tests`
+    * `.pytest_cache`
+    * `mcp.json`
+    * `.vscode`
+    * `.venv`
+    * `server.py`
+    * `__pycache__`
+    * `Makefile`
+    * `.ruff_cache`
+    * `README.md`
+    * `.github`
+    * `tags`
+    * `.mypy_cache`
+    * `uv.lock`
+    * `Dockerfile`
+    * `mcp-debian.code-workspace`
+    * `LICENSE`
+    * `.git`
+    * `pyproject.toml`
+    * `.dockerignore`
 
 ## Dependencies
 

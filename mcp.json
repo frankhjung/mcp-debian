@@ -4,10 +4,11 @@
       "command": "docker",
       "args": [
         "run",
-        "--rm",
         "-i",
-        "-v",
-        "/home/frank/dev/python/mcp-debian:/workspace:ro",
+        "--rm",
+        "--init",
+        "-e",
+        "DOCKER_CONTAINER=true",
         "mcp-debian"
       ]
     }
