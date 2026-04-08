@@ -99,6 +99,10 @@ test-container: build-image ## test the Docker image: verify server module loads
 		--entrypoint /app/.venv/bin/python \
 		$(PROJECT_NAME) -c 'from server import mcp, list_directory, read_file; tools = [t.name for t in mcp._tool_manager.list_tools()]; print("Tools registered:"); print(*tools, sep="\n")'
 
+mcp-config: ## copy MCP config into .vscode/
+	mkdir -p .vscode
+	cp mcp.json .vscode/mcp.json
+
 images: ## list local images for this project
 	@$(DOCKER) image ls $(PROJECT_NAME)
 

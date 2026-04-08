@@ -1,14 +1,26 @@
 {
-	"servers": {
-		"mcp-debian": {
-			"type": "stdio",
-			"command": "uv",
-			"args": [
-				"run",
-				"python",
-				"server.py"
-			]
-		}
-	},
-	"inputs": []
+  "servers": {
+    "mcp-debian-server": {
+      "command": "/home/frank/.local/bin/uv",
+      "args": [
+        "--directory",
+        "/home/frank/dev/mcp/debian",
+        "run",
+        "python",
+        "server.py"
+      ]
+    },
+    "mcp-debian-docker": {
+      "command": "docker",
+      "args": [
+        "run",
+        "-i",
+        "--rm",
+        "--init",
+        "-v",
+        "/home/frank/dev/mcp/debian:/workspace:ro",
+        "mcp-debian"
+      ]
+    }
+  }
 }

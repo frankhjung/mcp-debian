@@ -161,6 +161,8 @@ Other useful targets:
 * `make mcp-version`: Print the installed `mcp` package version.
 * `make project-version`: Print this project's version from `pyproject.toml`.
 * `make host-version`: Print the host OS version.
+* `make mcp-config`: Copy MCP configuration for use with the VSCode MCP
+  extension.
 * `make run`: Run a lightweight MCP runtime smoke test.
 
 ### Update the project version
@@ -232,54 +234,42 @@ Steps to Configure a Local MCP Server in VS Code Ensure Prerequisites:
 
   * **prompt:**
 
-    `#mcp-debian list the directories in the current workspace`
+    `#mcp-debian-server show project version`
+
+    `mcp-debian-server`
 
   * **response:**
 
-    Consifered using MCP tool for directory listing
+    `get_os_version()` is the host OS tool.
 
-    * I need to answer the user's request, and I’m considering using the MCP
-      tool to list the directory. The tool reference shows that
-      mcp_mcp-debian_list_directory is available, so I should call it with the
-      current workspace path. It seems important to mention that I’m using the
-      tool since it likely works well for this task. I'll preface the tool call
-      with a brief status update before executing it. Let's go ahead and make
-      that call!
+    **Project Version**
 
-    Checking the current workspace directory listing via MCP now.
+    `server 0.3.0`
 
-    Ran `list_directory` - mcp-debian (MCP Server)
+### Monitoring Container Logs
 
-    ```json
-    Completed with input: {
-      "path": "/home/frank/dev/mcp/debian"
-    }
-    ```
+**Note:** VS Code also shows output server output.
 
-    Here are the directories/files in the current workspace:
+To monitor `mcp-debian-docker` logs you first need to know the container id:
 
-    * `.python-version`
-    * `.gitignore`
-    * `tests`
-    * `.pytest_cache`
-    * `mcp.json`
-    * `.vscode`
-    * `.venv`
-    * `server.py`
-    * `__pycache__`
-    * `Makefile`
-    * `.ruff_cache`
-    * `README.md`
-    * `.github`
-    * `tags`
-    * `.mypy_cache`
-    * `uv.lock`
-    * `Dockerfile`
-    * `mcp-debian.code-workspace`
-    * `LICENSE`
-    * `.git`
-    * `pyproject.toml`
-    * `.dockerignore`
+```text
+$ docker ps
+CONTAINER ID   IMAGE        COMMAND                  CREATED         STATUS         PORTS     NAMES
+a13401d846c7   mcp-debian   "/app/.venv/bin/pyth…"   6 seconds ago   Up 5 seconds             nice_heyrovsky
+```
+
+Now follow logs:
+
+```text
+$ docker logs --follow nice_heyrovsky
+{"jsonrpc":"2.0","id":1,"result":{"protocolVersion":"2025-11-25","capabilities":{"experimental":{},"prompts":{"listChanged":false},"resources":{"subscribe":false,"listChanged":false},"tools":{"listChanged":false}},"serverInfo":{"name":"mcp-debian","version":"1.26.0"},"instructions":"Perform tasks on Debian-based systems. Server version: 0.3.0."}}
+[04/08/26 04:24:20] INFO     Processing request of type            server.py:720
+                             ListPromptsRequest
+                    INFO     Processing request of type            server.py:720
+                             ListToolsRequest
+{"jsonrpc":"2.0","id":2,"result":{"prompts":[]}}
+{"jsonrpc":"2.0","id":3,"result":{"tools":[{"name":"list_directory","description":"List the contents of a directory.\n\nArgs:\n    path: The absolute path of the directory to list.\n\nReturns:\n    A list of file and directory names in the specified path.\n","inputSchema":{"properties":{"path":{"title":"Path","type":"string"}},"required":["path"],"title":"list_directoryArguments","type":"object"},"outputSchema":{"properties":{"result":{"items":{"type":"string"},"title":"Result","type":"array"}},"required":["result"],"title":"list_directoryOutput","type":"object"}},{"name":"read_file","description":"Read the contents of a file.\n\nArgs:\n    path: The absolute path of the file to read.\n\nReturns:\n    The content of the file as a string.\n","inputSchema":{"properties":{"path":{"title":"Path","type":"string"}},"required":["path"],"title":"read_fileArguments","type":"object"},"outputSchema":{"properties":{"result":{"title":"Result","type":"string"}},"required":["result"],"title":"read_fileOutput","type":"object"}},{"name":"get_os_version","description":"Get the raw Debian version information from /etc/os-release.\n\nReturns:\n    The contents of /etc/os-release as a string.\n","inputSchema":{"properties":{},"title":"get_os_versionArguments","type":"object"},"outputSchema":{"properties":{"result":{"title":"Result","type":"string"}},"required":["result"],"title":"get_os_versionOutput","type":"object"}},{"name":"get_server_version","description":"Get the version of this MCP server project.\n\nReturns:\n    The version string from `pyproject.toml`.\n","inputSchema":{"properties":{},"title":"get_server_versionArguments","type":"object"},"outputSchema":{"properties":{"result":{"title":"Result","type":"string"}},"required":["result"],"title":"get_server_versionOutput","type":"object"}}]}}
+```
 
 ## Dependencies
 
